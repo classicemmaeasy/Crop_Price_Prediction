@@ -62,8 +62,14 @@ MONTH_OPTIONS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", 
 def load_model():
     if not MODEL_PATH.exists():
         raise FileNotFoundError(f"Model not found: {MODEL_PATH}")
-    with open(MODEL_PATH, "rb") as model_file:
-        return pickle.load(model_file)
+    try:
+        with open(MODEL_PATH, "rb") as model_file:
+            return pickle.load(model_file)
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "The saved model could not be loaded because the required sklearn dependency is missing or incompatible. "
+            "Install scikit-learn==1.6.1, pandas, and streamlit from requirements.txt."
+        ) from exc
 
 
 def get_model_choices(model):
